@@ -51,7 +51,7 @@ public partial class MainWindow : Form
 
     private void solveButton_Click(object sender, EventArgs e)
     {
-        var seedInput  = seedBox.Text.Trim();
+        var seedInput = seedBox.Text.Trim();
         var capacityInput = capacityBox.Text.Trim();
         var numberOfItemsInput = numberOfItemsBox.Text.Trim();
 
@@ -65,8 +65,8 @@ public partial class MainWindow : Form
         var result = problem.Solve(capacity);
 
         problemBox.Text = problem.ToString();
-        totalWeightBox.Text = result.TotalValue.ToString();
-        totalValueBox.Text = result.TotalWeight.ToString();
+        totalValueBox.Text = result.TotalValue.ToString();
+        totalWeightBox.Text = result.TotalWeight.ToString();
         resultBox.Text = result.ToString();
     }
 }
