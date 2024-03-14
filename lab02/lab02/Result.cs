@@ -23,7 +23,6 @@ public class Result
 
     public override string ToString()
     {
-        var itemsString = string.Join(", ", Items);
-        return $"Result(totalValue={TotalValue}, totalWeight={TotalWeight}, items=[{itemsString}])";
+        return $"{string.Join("\r\n", Items)}";
     }
 }

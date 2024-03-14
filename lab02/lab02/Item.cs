@@ -9,6 +9,6 @@ public class Item(int number, int value, int weight)
 
     public override string ToString()
     {
-        return $"Item(n={Number}, value={Value}, weight={Weight}, ratio={Ratio():F2})";
+        return $"Item(n={Number}, value={Value}, weight={Weight})";
     }
 }

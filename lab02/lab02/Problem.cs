@@ -48,7 +48,6 @@ public class Problem
     
     public override string ToString()
     {
-        var itemsString = string.Join(", ", Items);
-        return $"Problem(n={Items.Count}, items=[{itemsString}])";
+        return $"{string.Join("\r\n", Items)}";
     }
 }
