@@ -28,9 +28,7 @@ public class Problem
     public Result Solve(int capacity)
     {
         if (capacity < 0)
-        {
             throw new ArgumentException("Capacity cannot be negative");
-        }
         
         if (Items.Count == 0)
             return new Result([]);
