@@ -15,7 +15,7 @@ public partial class Dashboard : Form
     private readonly AnalysisService _analysisService;
 
     private int _offset = 0;
-    private int _limit = 15;
+    private int _limit = 10;
 
     public Dashboard()
     {
@@ -89,7 +89,7 @@ public partial class Dashboard : Form
         return analysis;
     }
 
-    private void UpdateAnalysisDtg(Expression<Func<Analysis, bool>>? filter = null, int offset = 0, int limit = 15)
+    private void UpdateAnalysisDtg(Expression<Func<Analysis, bool>>? filter = null, int offset = 0, int limit = 10)
     {
         var analyses = filter == null
             ? _analysisService.GetAllAnalyses(offset, limit)
