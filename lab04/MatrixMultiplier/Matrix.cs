@@ -70,7 +70,7 @@ public class Matrix
         for (var i = 0; i < maxThreads; i++)
         {
             var from = i * chunks;
-            var to = (i == maxThreads - 1) ? from + chunks + extra : chunks + extra;
+            var to = (i == maxThreads - 1) ? from + chunks + extra : from + chunks;
             threads[i] = new Thread(() => MultiplyRange(from, to, this, other, result));
             threads[i].Start();
         }
