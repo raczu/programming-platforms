@@ -86,19 +86,17 @@ public class Matrix
     public Matrix ParalleledMultiply(Matrix other, int maxThreads)
     {
         var result = new Matrix(Size);
+        var chunks = Size / maxThreads;
+        var extra = Size % maxThreads;
         var options = new ParallelOptions
         {
             MaxDegreeOfParallelism = maxThreads
         };
-        Parallel.For(0, Size, options, i =>
+        Parallel.For(0, maxThreads, options, i =>
         {
-            for (var j = 0; j < Size; j++)
-            {
-                for (var k = 0; k < other.Size; k++)
-                {
-                    result[i, j] = this[i, k] * other[k, j];
-                }
-            }
+            var from = i * chunks;
+            var to = (i == maxThreads - 1) ? from + chunks + extra : from + chunks;
+            MultiplyRange(from, to, this, other, result);
         });
         return result;
     }
