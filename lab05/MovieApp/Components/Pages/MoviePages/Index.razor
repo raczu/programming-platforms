@@ -1,0 +1,41 @@
+﻿@page "/movies"
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Microsoft.EntityFrameworkCore
+@inject MovieApp.Data.ApplicationDbContext DB
+@using MovieApp.Data
+@attribute [StreamRendering]
+@rendermode InteractiveServer
+
+<PageTitle>Index</PageTitle>
+
+<h1>Movie list</h1>
+
+<QuickGrid Class="table" Items="DB.Movie" Pagination="@pagination">
+    <PropertyColumn Property="movie => movie.Title" Sortable="true"/>
+    <PropertyColumn Title="Release Date" Property="movie => movie.ReleaseDate" Format="yyyy-MM-dd" Sortable="true"/>
+    <PropertyColumn Property="movie => movie.Rate" Format="F1" Sortable="true"/>
+
+    <TemplateColumn Context="movie">
+        <a href="@($"movies/details?id={movie.Id}")" class="btn btn-primary">Details</a>
+        <AuthorizeView>
+            <Authorized>
+                <a href="@($"movies/edit?id={movie.Id}")" class="btn btn-info">Edit</a>
+                <a href="@($"movies/delete?id={movie.Id}")" class="btn btn-danger">Delete</a>
+            </Authorized>
+        </AuthorizeView>
+    </TemplateColumn>
+</QuickGrid>
+
+<Paginator State="@pagination" />
+
+<AuthorizeView>
+    <Authorized>
+        <div>
+            <a href="movies/create" class="btn btn-success">Add a new movie</a>
+        </div>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    PaginationState pagination = new PaginationState() { ItemsPerPage = 25 };
+}

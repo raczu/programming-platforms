@@ -1,0 +1,100 @@
+﻿@page "/Movies/edit"
+@inject MovieApp.Data.ApplicationDbContext DB
+@using MovieApp.Data
+@inject NavigationManager NavigationManager
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit movie information</h1>
+
+<hr />
+@if (Movie is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Movie" OnValidSubmit="UpdateMovie" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <input type="hidden" name="Movie.Id" value="@Movie.Id" />
+                <input type="hidden" name="Movie.Rate" value="@Movie.Rate" />
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title:</label>
+                    <InputText id="title" @bind-Value="Movie.Title" class="form-control" />
+                    <ValidationMessage For="() => Movie.Title" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description:</label>
+                    <InputTextArea id="description" @bind-Value="Movie.Description" class="form-control" />
+                    <ValidationMessage For="() => Movie.Description" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="releasedate" class="form-label">Release Date:</label>
+                    <InputDate id="releasedate" @bind-Value="Movie.ReleaseDate" class="form-control" />
+                    <ValidationMessage For="() => Movie.ReleaseDate" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="imageurl" class="form-label">Image URL:</label>
+                    <InputText id="imageurl" @bind-Value="Movie.ImageUrl" class="form-control" />
+                    <ValidationMessage For="() => Movie.ImageUrl" class="text-danger" />
+                </div>
+                <a href="/movies" class="btn btn-primary">Back to List</a>
+                <button type="submit" class="btn btn-success">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+@code {
+    [SupplyParameterFromQuery]
+    public int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    public Movie? Movie { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Movie ??= await DB.Movie.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (Movie is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more details, see https://aka.ms/RazorPagesCRUD.
+    public async Task UpdateMovie()
+    {
+        DB.Attach(Movie!).State = EntityState.Modified;
+
+        try
+        {
+            await DB.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!MovieExists(Movie!.Id))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/movies");
+    }
+
+    bool MovieExists(int id)
+    {
+        return DB.Movie.Any(e => e.Id == id);
+    }
+}

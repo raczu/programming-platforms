@@ -1,0 +1,87 @@
+﻿@page "/movies/details"
+@inject MovieApp.Data.ApplicationDbContext DB
+@using MovieApp.Data
+@inject NavigationManager NavigationManager
+@using Microsoft.EntityFrameworkCore
+@using System.ComponentModel.DataAnnotations
+@inject ILogger<Details> Logger
+
+<PageTitle>Details</PageTitle>
+
+<h1>Movie details</h1>
+
+<div>
+    <hr />
+    @if (movie is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <div class="row">
+            <div class="col-md-4">
+                <img src="@movie.ImageUrl" class="img-fluid rounded" alt="@movie.Title" />
+            </div>
+            <div class="col-md-8">
+                <h5>@movie.Title</h5>
+                <p>@movie.Description</p>
+                <p><small class="text-muted">Release Date: @movie.ReleaseDate.ToString("yyyy-MM-dd")</small></p>
+                <p><small class="text-muted">Rate: @movie.Rate?.ToString("F1")</small></p>
+                
+                <AuthorizeView>
+                    <Authorized Context="authContext">
+                        <EditForm Model="MovieRateModel" OnValidSubmit="UpdateMovieRate" FormName="User rate" Enhance class="mb-3">
+                            <DataAnnotationsValidator/>
+
+                            <label for="rate" class="form-label d-block">Your rate:</label>
+                            <InputNumber id="rate" @bind-Value="MovieRateModel!.Rate" class="form-control w-25 mb-3"/>
+                            <ValidationMessage For="() => MovieRateModel.Rate" class="text-danger"/>
+                            <input type="submit" class="btn btn-success d-block" value="Submit your rate"/>
+                        </EditForm>
+                    </Authorized>
+                </AuthorizeView>
+                
+                <a href="@($"/movies")" class="btn btn-primary">Back to List</a>
+                <AuthorizeView>
+                    <Authorized>
+                        <a href="@($"/movies/edit?id={movie.Id}")" class="btn btn-info">Edit</a>
+                        <a href="@($"/movies/delete?id={movie.Id}")" class="btn btn-danger">Delete</a>
+                    </Authorized>
+                </AuthorizeView>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    Movie? movie;
+
+    [SupplyParameterFromForm]
+    public RateModel? MovieRateModel { get; set; } = new();
+
+    [SupplyParameterFromQuery]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        movie = await DB.Movie.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (movie is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+    
+    public class RateModel
+    {
+        [Required]
+        [Range(1, 10)]
+        public float Rate { get; set; }
+    }
+
+    private async Task UpdateMovieRate()
+    {
+        movie!.ReviewCount++;
+        movie.Rate = ((movie.Rate * (movie.ReviewCount - 1)) + MovieRateModel!.Rate) / movie.ReviewCount;
+        await DB.SaveChangesAsync();
+    }
+}
