@@ -49,7 +49,7 @@ public class MainWindow {
                 int capacity = Integer.parseInt(capacityInput);
                 int numberOfItems = Integer.parseInt(numberOfItemsInput);
 
-                Problem problem = new Problem(numberOfItems, seed);
+                Problem problem = new Problem(numberOfItems, seed, 1, 10);
                 Result result = problem.solve(capacity);
 
                 problemDetailsTextArea.setText(problem.toString());

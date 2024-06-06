@@ -31,7 +31,7 @@ public class Main {
         }
         int capacity = scanner.nextInt();
 
-        Problem problem = new Problem(n, seed);
+        Problem problem = new Problem(n, seed, 1, 10);
         System.out.printf("%nProblem details: %s%n", problem);
 
         Result result = problem.solve(capacity);

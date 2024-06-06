@@ -12,7 +12,7 @@ public class Problem {
         this.items = items;
     }
 
-    public Problem(int n, int seed) throws IllegalArgumentException {
+    public Problem(int n, int seed, int lowerBound, int upperBound) throws IllegalArgumentException {
         if (n < 0) {
             throw new IllegalArgumentException("Number of items cannot be negative");
         }
@@ -21,8 +21,8 @@ public class Problem {
         Random random = new Random(seed);
 
         for (int i = 0; i < n; i++) {
-            int value = random.nextInt(10) + 1;
-            int weight = random.nextInt(10) + 1;
+            int value = random.nextInt(lowerBound, upperBound) + 1;
+            int weight = random.nextInt(lowerBound, upperBound) + 1;
             this.items.add(new Item(i, value, weight));
         }
     }
@@ -41,7 +41,7 @@ public class Problem {
         List<Item> packed = new ArrayList<>();
 
         for (Item item : sorted) {
-            if (item.weight <= capacity) {
+            while (item.weight <= capacity) {
                 packed.add(item);
                 capacity -= item.weight;
             }
